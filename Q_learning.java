@@ -8,9 +8,12 @@ package q_learning;
  */
 public class Q_learning {
   public static void main(String[] args) throws InterruptedException {
-    Game g = new Game(600,350);
-    Agent a = new Agent(0.92f, 0.5f,0.1f,g);
-    a.play(10000000);
+    Game game = new Game(600,350);
+    float gamma = 0.92f;
+    float epsilon = 0.5f;
+    float alpha = 0.1f;
+    Agent agent = new Agent(gamma, epsilon,alpha,game);
+    agent.play(10000000);
   }
 }
 

@@ -1,12 +1,15 @@
+/**
+ *
+ * @author matthewsokoloff
+ * This file contains the code for the agent's decision making processes.
+ */
+
+
 package q_learning;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
-/**
- *
- * @author matthewsokoloff
- * This file contains the agent code primarily for decision making purposes.
- */
+
 public class Agent {
   private float epsilon;
   private float gamma;
@@ -20,6 +23,13 @@ public class Agent {
   Game board;
   private double epsilonDecay;
   
+  
+  /*
+  *@gamma   : The discount factor for future rewards
+  *@epsilon : The probability the agent makes a random move
+  *@alpha   : The learning rate for the agent
+  *@board   : A reference to a game object for the agent to interact with
+  */
   public Agent(float gamma, float epsilon,float alpha, Game board) {
     this.epsilon = epsilon;
     this.gamma = gamma; 
@@ -30,6 +40,12 @@ public class Agent {
     this.epsilonDecay = 0.0001;
   }
   
+  
+  /*
+  *@possibleMove    : The x,y coordinate of a potential move for the agent to make
+  *@agentPosition   : The current x,y coordinates of the agent
+  *Returns a boolean indicating weather or not the move is legal
+  */
   private boolean legal(int[] possibleMove,int[] agentPosition) {
     return 
       possibleMove[0]<outOfBoundsX && possibleMove[0]>= 0
@@ -48,6 +64,11 @@ public class Agent {
     ;
   }
     
+  
+  /*
+  *@state   : The current x,y coordinates of the agent
+  *Returns an ArrayList containing all legal moves for the agent to make
+  */
   private ArrayList<int[]> getLegalMoves(int[] state){
     ArrayList <int[]> legalMoves = new ArrayList<>();
     int[] xCandidates = {state[0]-1,state[0], state[0]+1};
@@ -63,6 +84,11 @@ public class Agent {
     return legalMoves;
   }
   
+  
+  /*
+  *@legalMoves : A list of legal moves that the agent can make
+  * Returns the x,y coordinates of the move with the greatest q-value
+  */
   private int[] getMaxQValueMove(ArrayList<int[]> legalMoves){
     float maxValue = 0f;
     int maxIndex = 0;
@@ -88,6 +114,11 @@ public class Agent {
     return bestMove;
   }
   
+  
+  /*
+  *@state   : The current x,y coordinates of the agent
+  * Returns the largest q value for all states the agent can reach from its current state
+  */
   private float getMaxQValue(int[] state) {
     float maxValue = -1;
     String hash = "";
@@ -108,6 +139,11 @@ public class Agent {
     return maxValue;
   }
   
+  
+  /*
+  *Returns either a random move (with epsilon % chance) 
+  * or returns the move with the largest q-value
+  */
   private int[] getMove() {
     ArrayList<int[]> legalMoves = getLegalMoves(this.agentPosition);
     if(this.rn.nextFloat() < this.epsilon) {
@@ -118,6 +154,11 @@ public class Agent {
     }
   }
   
+  /*
+  *@prevState : The state the agent was in prior to its last move (x,y coordinate)
+  *@reward    : The observed reward after moving to the agents current state
+  *@nextState : The current state of the agent (x,y coordinate)
+  */
   private void updateQValues(int[] prevState, float reward, int[] nextState) {
     String hash = prevState[0] + "_" + prevState[1];
     float oldValue = this.qValues.containsKey(hash) ? this.qValues.get(hash): 0f;
@@ -125,6 +166,11 @@ public class Agent {
     this.qValues.put(hash,newValue);
   }
   
+  
+  /*
+  *@move   : The move the agent has chosen to make
+  *@reward : The reward of the agent's move
+  */
   private void updateAgent(int[] move, float reward){
         int[] prevState = this.agentPosition;
         this.agentPosition[0] = move[0];
@@ -132,7 +178,9 @@ public class Agent {
         updateQValues(prevState, reward, this.agentPosition);
   }
   
- 
+ /*
+  *@numGames   : How many games the agent should play
+  */
   public void play(int numGames) throws InterruptedException {
     boolean sleep = false;
     int madeCount = 0;

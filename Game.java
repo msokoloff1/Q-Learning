@@ -13,12 +13,13 @@ import java.awt.Graphics;
 
 public class Game extends Frame {
   private int gameNumber;
-                                //x,y
-  private int[] agentPosition = {0,5};
+  private final int agentStartX = 0;
+  private final int agentStartY = 5;
+  private int[] agentPosition = {agentStartX,agentStartY};
   private final int tileWH = 50;
   private int startX = 20;
   private int startY = 20;
-  
+ 
   private float[][] board = {
       {0 , 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
       {0 , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -28,15 +29,18 @@ public class Game extends Frame {
       {0 , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
   };
     
-  
-  public Game(int boardWidth, int boardHeight) {
+
+  public Game() {
     super("Q-Learning Maze");
     this.gameNumber = 0;
-    setSize(boardWidth,boardHeight);
+    setSize(600,350);
     setVisible(true);
     randomizeBoard();
   }
   
+  /*
+  *This function adds random obstacles to the board for the agent to naviagate around 
+  */
   private void randomizeBoard(){
     float[] boardValues = {0,0,-1};
     Random rand = new Random();
@@ -47,18 +51,32 @@ public class Game extends Frame {
     }
   }
   
+  /*
+  *This function updates the agents position on the board.
+  *@x : The x coordinate of the agent
+  *@y : The y coordinate of the agent
+  * Returns : The reward of the agent's new position
+  */
   public float setAgentPosition(int x, int y){
       this.agentPosition[0] = x;
       this.agentPosition[1] = y;
       return board[y][x];
   }
   
+  /*
+  *Resets the agents position and then increments the game counter 
+  */
   public void gameOver() {
       this.gameNumber += 1;
-      this.agentPosition[0] = 0;
-      this.agentPosition[1] = 5;
+      this.agentPosition[0] = agentStartX;
+      this.agentPosition[1] = agentStartY;
   }
   
+  
+  /*
+  *@value : The reward of the position on the board
+  *Returns : The appropriate color for the specific tile on the board
+  */
   private Color lookupPaintColor(int value){
       switch(value){
           case 0:
@@ -71,6 +89,11 @@ public class Game extends Frame {
       return Color.white;
   }
     
+  
+  /*
+  *This method renders the graphics to the screen
+  *None of the game logic occurs here
+  */
   public void paint(Graphics g) {
     g.setColor(Color.red);
     for(float[] row: board) {
@@ -89,6 +112,8 @@ public class Game extends Frame {
     g.setColor(Color.BLACK);
     g.drawString("Game number : " + this.gameNumber, 230, 335);
     repaint();
-  }    
+  }
+    
+    
 }
 
